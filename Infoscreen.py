@@ -78,10 +78,13 @@ def main():
             myLCD.printString(nextBusDict['busNr'][i] + ': ' +  nextBusDict['timeToNextBus'][i] + ' min (' + nextBusDict['delay'][i] + ')', i)
     
     
-    
         # display temperature
         myLCD.printString('Temp: ' + str(temp) + ' øC',4)
         myLCD.printString('Hum:  ' + str(hum) + ' %',5)
+
+        
+        # display time of last update (for debugging purposes)
+        myLCD.printString('Time: ' + datetime.datetime.now().strftime('%H:%M:%S'),6)
 
         firstRun = 0
 
