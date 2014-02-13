@@ -84,7 +84,7 @@ def main():
 
         
         # display time of last update (for debugging purposes)
-        myLCD.printString('Time: ' + datetime.datetime.now().strftime('%H:%M:%S'),6)
+        myLCD.printString('Time: ' + datetime.datetime.now().strftime('%H:%M:%S'),7)
 
         firstRun = 0
 
