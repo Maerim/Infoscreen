@@ -1,7 +1,7 @@
 import urllib.request
 import json
 from datetime import datetime
-#from pprint import pprint
+from pprint import pprint
 
 class nextBus(object):
 
@@ -29,7 +29,13 @@ class nextBus(object):
             timeToNextBus.append(data['journey'][i]['countdown_val'])
             busNr.append(data['journey'][i]['pr'])
             busTo.append(data['journey'][i]['st'])
-            delay.append(data['journey'][i]['rt']['dlm'])
+            
+            # sometimes the delay (rt) from ZVV will just output false
+            if data['journey'][i]['rt'] == False:
+                delay.append('0')
+            else:
+                delay.append(data['journey'][i]['rt']['dlm'])
+                
             #print(busNr + " " + busTo + " " + timeToNextBus + " min (Verspätung: " + delay + " min)")
         
         outputDict = {"timeToNextBus":timeToNextBus, "busNr":busNr, "busTo":busTo, "delay":delay}   
