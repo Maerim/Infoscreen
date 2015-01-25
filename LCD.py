@@ -12,7 +12,7 @@ import math
 import font
 import wiringpi2
 
-GPIO.setwarnings(False)
+#GPIO.setwarnings(False)
 
 class LCD(object):
 

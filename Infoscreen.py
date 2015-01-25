@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 
 # ===============
 # Jethro Hemmann
@@ -10,6 +11,18 @@ import RPi.GPIO as GPIO
 from pprint import pprint
 from time import sleep
 import datetime
+import signal # for catching termination signal
+import sys
+
+
+# CATCH SIGTERM AND SIGINT SIGNALS
+def signal_term_handler(signal, frame):
+	print('Infoscreen exits...')
+	GPIO.cleanup()
+	sys.exit(0)
+
+signal.signal(signal.SIGTERM, signal_term_handler)
+signal.signal(signal.SIGINT, signal_term_handler)
 
 
 # =======================
@@ -88,10 +101,6 @@ def main():
 
 		firstRun = 0
 
-
-	# clean up
-	#GPIO.cleanup()
-	#print('done')
 
 if __name__ == "__main__":
 	main()
