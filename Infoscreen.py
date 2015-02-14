@@ -50,10 +50,10 @@ def isNight():
 
 
 def main():
-	myLCD = LCD(CS1=17, CS2=4, E=15, RS=14, D0=27, D1=23, D2=24, D3=25, D4=8, D5=11, D6=9, D7=22, PWM=1) #PWM pin number is wiringPi numbering!
+	myLCD = LCD(CS1=17, CS2=7, E=15, RS=14, D0=27, D1=23, D2=24, D3=25, D4=8, D5=11, D6=9, D7=22, PWM=1) #PWM pin number is wiringPi numbering!
 	myNextBus = nextBus()
 	myAM2302 = AM2302()
-
+	
 
 	# set the initial backlight flag
 	if isNight():
@@ -63,7 +63,7 @@ def main():
 		backlightNightFlag = 0
 		myLCD.setBacklightPWM(BACKLIGHT_DAY_VALUE)
 
-
+	
 	firstRun = 1
 
 	while(True):
@@ -82,6 +82,8 @@ def main():
 	
 		# get bus
 		nextBusDict = myNextBus.getNextBus()
+		
+		# get temp and humidity
 		temp = myAM2302.getTemp()
 		hum = myAM2302.getHumidity()
 	

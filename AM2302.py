@@ -16,7 +16,7 @@ class AM2302(object):
 		# Code adapted from Adafruit
 		# Run the DHT program to get the humidity and temperature readings!
 
-		output = subprocess.check_output([os.path.dirname(os.path.realpath(__file__)) + "/Adafruit_DHT", "2302", "7"]);
+		output = subprocess.check_output([os.path.dirname(os.path.realpath(__file__)) + "/Adafruit_DHT", "2302", "4"]);
 		matches = re.search(b"Temp =\s+([0-9.]+)", output)
 		if (not matches):
 			#time.sleep(3)
