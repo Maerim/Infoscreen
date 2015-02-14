@@ -35,7 +35,7 @@ class LCD(object):
 		
 		# setup wiringPi for backlight PWM
 		wiringpi2.wiringPiSetup()
-		wiringpi2.pinMode(1,2) # setup wiringPi pin for PWM		   
+		wiringpi2.pinMode(self.PWM,2) # setup wiringPi pin for PWM		   
 		
 		GPIO.setmode(GPIO.BCM)
 		
@@ -154,4 +154,4 @@ class LCD(object):
 				self.setAddress(1)
 
 	def setBacklightPWM(self, value):
-		wiringpi2.pwmWrite(1, value)
+		wiringpi2.pwmWrite(self.PWM, value)

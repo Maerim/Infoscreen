@@ -50,7 +50,7 @@ def isNight():
 
 
 def main():
-	myLCD = LCD(CS1=17, CS2=4, E=15, RS=14, D0=27, D1=23, D2=24, D3=25, D4=8, D5=11, D6=9, D7=22, PWM=1)
+	myLCD = LCD(CS1=17, CS2=4, E=15, RS=14, D0=27, D1=23, D2=24, D3=25, D4=8, D5=11, D6=9, D7=22, PWM=1) #PWM pin number is wiringPi numbering!
 	myNextBus = nextBus()
 	myAM2302 = AM2302()
 
