@@ -66,7 +66,7 @@ def main():
 		myLCD.setBacklightPWM(BACKLIGHT_DAY_VALUE)
 
 	
-	running_string = 'Hallo mein Name ist Jethro Hemmann'
+	running_string = 'Hallo, dies ist ein Test'
 	running_string_2 = running_string + ' - ' + running_string
 	running_index = 0
 
