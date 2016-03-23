@@ -28,6 +28,8 @@ signal.signal(signal.SIGINT, signal_term_handler)
 # =======================
 # CONFIGURATION CONSTANTS
 # =======================
+UPDATE_FREQUENCY_BUS = 15 # update bus/temp every n seconds
+
 BACKLIGHT_NIGHT_START = datetime.time(22,0,0)
 BACKLIGHT_NIGHT_END = datetime.time(6,0,0)
 BACKLIGHT_NIGHT_VALUE = 10
@@ -64,12 +66,12 @@ def main():
 		myLCD.setBacklightPWM(BACKLIGHT_DAY_VALUE)
 
 	
-	firstRun = 1
+	running_string = 'Hallo mein Name ist Jethro Hemmann'
+	running_string_2 = running_string + ' - ' + running_string
+	running_index = 0
 
+	last_update = datetime.datetime.now() - datetime.timedelta(seconds=UPDATE_FREQUENCY_BUS)
 	while(True):
-	
-		if firstRun != 1: # do not sleep during first run
-			sleep(30)
 	
 		# dim backlight if its night
 		if isNight():
@@ -79,30 +81,38 @@ def main():
 		elif backlightNightFlag == 1:
 			backlightNightFlag = 0
 			myLCD.setBacklightPWM(BACKLIGHT_DAY_VALUE)
+	 	
+	 	# update bus/temp only every 30 s
+		if 	(datetime.datetime.now() - last_update).seconds >= UPDATE_FREQUENCY_BUS:
+			# get bus
+			nextBusDict = myNextBus.getNextBus()
+			# get temp and humidity
+			temp = myAM2302.getTemp()
+			hum = myAM2302.getHumidity()
 	
-		# get bus
-		nextBusDict = myNextBus.getNextBus()
-		
-		# get temp and humidity
-		temp = myAM2302.getTemp()
-		hum = myAM2302.getHumidity()
-	
-		myLCD.clearScreen()
-	
-		for i in range(len(nextBusDict['busNr'])):
-			myLCD.printString(nextBusDict['busNr'][i] + ': ' +	nextBusDict['timeToNextBus'][i] + ' min (' + nextBusDict['delay'][i] + ')', i)
-	
-	
-		# display temperature
-		myLCD.printString('Temp: ' + str(temp) + ' øC',4)
-		myLCD.printString('Hum:	 ' + str(hum) + ' %',5)
+			# display bus
+			for i in range(len(nextBusDict['busNr'])):
+				myLCD.printString(nextBusDict['busNr'][i] + ': ' +	nextBusDict['timeToNextBus'][i] + ' min (' + nextBusDict['delay'][i] + ')', i)
+			# display temperature
+			myLCD.printString('Temp: ' + str(temp) + ' øC',4)
+			myLCD.printString('Hum:	 ' + str(hum) + ' %',5)
+			
+			last_update = datetime.datetime.now()
 
 		
-		# display time of last update (for debugging purposes)
-		myLCD.printString('Time: ' + datetime.datetime.now().strftime('%H:%M:%S'),7)
+		# display time
+		#myLCD.printString('Time: ' + datetime.datetime.now().strftime('%H:%M:%S'),7)
 
-		firstRun = 0
 
+		currently_displayed_string = running_string_2[running_index:running_index+16]
+		myLCD.printString(currently_displayed_string,7)
+		
+		if running_index == len(running_string) + 2: #2=3-1, 3= number of characters in separator
+			running_index = 0
+		else:
+			running_index += 1
+
+		sleep(0.3)
 
 if __name__ == "__main__":
 	main()

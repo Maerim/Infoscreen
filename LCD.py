@@ -11,6 +11,7 @@ from time import sleep
 import math
 import font
 import wiringpi2
+from Framebuffer import Framebuffer
 
 #GPIO.setwarnings(False)
 
@@ -32,6 +33,9 @@ class LCD(object):
 		self.D6 = D6
 		self.D7 = D7
 		self.PWM = PWM
+		
+		# initialize new framebuffer
+		self.myFrameBuffer = Framebuffer()
 		
 		# setup wiringPi for backlight PWM
 		wiringpi2.wiringPiSetup()
@@ -95,13 +99,15 @@ class LCD(object):
 		page = math.ceil((65-y)/8)-1 # convert in LCD coordinate system and select corresponding page
 		
 		self.setPage(page)
-		
 		self.setAddress(x)
 
-		byte = 1<<((64-y)%8) # use shift operator to set byte
+		currentByte = self.myFrameBuffer.getFramebufferByte(x,page)
+
+		byte = currentByte | (1<<((64-y)%8)) # use shift operator to set byte
+		#print(str(currentByte) + ' ' + str(byte))
 		self.setByte(byte,1) # do not change chip
-		
-		
+		self.myFrameBuffer.setFramebufferByte(x,page,byte)
+	
 	def setAddress(self, y): # set address in pixels!! (1-128)
 		GPIO.output(self.RS, 0)
 		
@@ -136,6 +142,8 @@ class LCD(object):
 			self.setByte(font.chars[asciiCode][i],1,CS1,CS2)
 		
 	def printString(self, string, page):
+		if len(string) < 16: # add white space at end if string shorter than one line --> clears rest of the line
+			string = string + ' '*(16-len(string))
 		CS1 = 1 # begin on chip 1
 		CS2 = 0
 		self.setPage(page)
@@ -148,10 +156,10 @@ class LCD(object):
 				CS2 = ~CS2 & 0x01
 				self.setAddress(65) # set first pixel
 				
-			if (i+1)%16 == 0: # change line after 16 characters (page)
-				page=page+1
-				self.setPage(page)
-				self.setAddress(1)
+			#if (i+1)%16 == 0: # change line after 16 characters (page)
+			#	page=page+1
+			#	self.setPage(page)
+			#	self.setAddress(1)
 
 	def setBacklightPWM(self, value):
 		wiringpi2.pwmWrite(self.PWM, value)
