@@ -92,6 +92,7 @@ def main():
 			temp = myAM2302.getTemp()
 			hum = myAM2302.getHumidity()
 			
+			# update calendar data
 			events = myCalendar.get_events()
 			if len(events) > 1: # only display next 2 events
 				running_string = events[0] + ' - ' + events[1]
@@ -99,7 +100,6 @@ def main():
 				running_string = 'No events scheduled'
 			else: # only 1 event
 				running_string = events[0]
-			
 			running_string_2 = running_string + ' - ' + running_string # double string to make it easier for running it over the screen
 			running_index = 0
 			
