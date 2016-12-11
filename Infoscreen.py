@@ -15,7 +15,7 @@ import signal # for catching termination signal
 import sys
 
 # own imports
-from nextBus import nextBus
+from next_bus import get_next_bus
 from LCD import LCD
 from AM2302 import AM2302
 from GoogleCalendar import GoogleCalendar
@@ -57,8 +57,7 @@ def main():
 
 	# create objects
 	myLCD = LCD(CS1=17, CS2=7, E=15, RS=14, D0=27, D1=23, D2=24, D3=25, D4=8, D5=11, D6=9, D7=22, PWM=1) #PWM pin number is wiringPi numbering!
-	myNextBus = nextBus()
-	myAM2302 = AM2302()
+	myAM2302 = AM2302(pin=4)
 	myCalendar = GoogleCalendar()
 
 	# set the initial backlight flag
@@ -84,10 +83,11 @@ def main():
 			myLCD.setBacklightPWM(BACKLIGHT_DAY_VALUE)
 	 	
 	 	
-	 	# update bus/temp only every 30 s
+	 	# update bus/temp only every n secs
 		if 	(datetime.datetime.now() - last_update).seconds >= UPDATE_FREQUENCY_BUS:
 			# get bus
-			nextBusDict = myNextBus.getNextBus()
+			next_bus_dict = get_next_bus()
+			
 			# get temp and humidity
 			temp = myAM2302.getTemp()
 			hum = myAM2302.getHumidity()
@@ -103,9 +103,8 @@ def main():
 			running_string_2 = running_string + ' - ' + running_string # double string to make it easier for running it over the screen
 			running_index = 0
 			
-			# display bus
-			for i in range(len(nextBusDict['busNr'])):
-				myLCD.printString(nextBusDict['busNr'][i] + ': ' +	nextBusDict['timeToNextBus'][i] + ' min (' + nextBusDict['delay'][i] + ')', i)
+			display_next_buses(myLCD, next_bus_dict)
+						
 			# display temperature
 			myLCD.printString('Temp: ' + str(temp) + ' øC',4)
 			myLCD.printString('Hum:	 ' + str(hum) + ' %',5)
@@ -122,5 +121,14 @@ def main():
 
 		sleep(0.3)
 
+def display_next_buses(LCD, bus_dict):
+	for i in range(len(bus_dict['busNr'])):
+		line_to_display = bus_dict['busNr'][i] + ': ' + bus_dict['timeToNextBus'][i] + ' min (' + bus_dict['delay'][i] + ')'
+		LCD.printString(line_to_display, i)
+
+
 if __name__ == "__main__":
-	main()
+	try:
+		main()
+	except:
+		GPIO.cleanup()

@@ -1,39 +1,23 @@
-import subprocess
-import re
-import time
-import datetime
-import os
+import Adafruit_DHT
 
-class AM2302(object):
+class AM2302:
 	
-	def __init__(self):
+	def __init__(self, pin):
 		self.temp = 0.0
 		self.hum = 0.0
+		self.pin = pin
 		self.update()
 	
 	def update(self):
-	
-		# Code adapted from Adafruit
-		# Run the DHT program to get the humidity and temperature readings!
-
-		output = subprocess.check_output([os.path.dirname(os.path.realpath(__file__)) + "/Adafruit_DHT", "2302", "4"]);
-		matches = re.search(b"Temp =\s+([0-9.]+)", output)
-		if (not matches):
-			#time.sleep(3)
-			#self.update() # retry the update and exit the function
-			return
-		temp = float(matches.group(1))
-
-		# search for humidity printout
-		matches = re.search(b"Hum =\s+([0-9.]+)", output)
-		if (not matches):
-			#time.sleep(3)
-			#self.update()
-			return
-		humidity = float(matches.group(1))
+		humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, self.pin)
 		
-		self.temp = temp
-		self.hum = humidity
+		if humidity == None:
+			humidity = 0.0
+		if temperature == None:
+			temperature = 0.0
+		
+		self.temp = round(temperature,1)
+		self.hum = round(humidity,1)
 		
 	def getTemp(self):
 		self.update()
