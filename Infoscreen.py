@@ -88,9 +88,6 @@ def main():
 			# get bus
 			next_bus_dict = get_next_bus()
 			
-			# get temp and humidity
-			temp = myAM2302.getTemp()
-			hum = myAM2302.getHumidity()
 			
 			# update calendar data
 			events = myCalendar.get_events()
@@ -104,10 +101,11 @@ def main():
 			running_index = 0
 			
 			display_next_buses(myLCD, next_bus_dict)
-						
-			# display temperature
-			myLCD.printString('Temp: ' + str(temp) + ' øC',4)
-			myLCD.printString('Hum:	 ' + str(hum) + ' %',5)
+			
+			temp, hum = myAM2302.get_data()
+			display_room_climate_data(myLCD, temp, hum)
+			log_room_climate_data('/home/pi/Infoscreen/room_climate.log', temp, hum)
+			
 			
 			last_update = datetime.datetime.now()
 
@@ -127,8 +125,17 @@ def display_next_buses(LCD, bus_dict):
 		LCD.printString(line_to_display, i)
 
 
+def display_room_climate_data(LCD, temp, hum):
+	LCD.printString('Temp: ' + str(round(temp,1)) + ' øC',4)
+	LCD.printString('Hum:	 ' + str(round(hum,1)) + ' %',5)
+	
+def log_room_climate_data(file_name, temp, hum):
+    file = open(file_name, 'a')
+    file.write('%s \t %f \t %f \n' %(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), temp, hum))
+    file.close()
+
 if __name__ == "__main__":
 	try:
 		main()
-	except:
+	finally:
 		GPIO.cleanup()

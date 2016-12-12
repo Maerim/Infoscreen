@@ -6,9 +6,9 @@ class AM2302:
 		self.temp = 0.0
 		self.hum = 0.0
 		self.pin = pin
-		self.update()
+		self._update()
 	
-	def update(self):
+	def _update(self):
 		humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, self.pin)
 		
 		if humidity == None:
@@ -16,13 +16,9 @@ class AM2302:
 		if temperature == None:
 			temperature = 0.0
 		
-		self.temp = round(temperature,1)
-		self.hum = round(humidity,1)
-		
-	def getTemp(self):
-		self.update()
-		return self.temp
+		self.temp = temperature
+		self.hum = humidity
 	
-	def getHumidity(self):
-		self.update()
-		return self.hum
+	def get_data(self):
+		self._update()
+		return((self.temp, self.hum))
