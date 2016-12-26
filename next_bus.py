@@ -17,14 +17,14 @@ def _read_data_from_zvv():
 		#print(timetable_data, flush=True)
 	
 		timetable_data_string = timetable_data.decode(encoding='UTF-8')
+		timetable_data_string_truncated = timetable_data_string[14:]
+		data = json.loads(timetable_data_string_truncated)
+		
+		return data
+		
 	except:
 		return None
 		
-
-	timetable_data_string_truncated = timetable_data_string[14:]
-	data = json.loads(timetable_data_string_truncated)
-	
-	return data
 
 def get_next_bus():
 
