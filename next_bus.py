@@ -40,7 +40,7 @@ def get_next_bus():
 	busTo=list()
 	delay=list()
 	
-	nr_buses_to_use = min(2,len(data['journey'])) # trying to catch cases where ZVV returns less than 2 buses
+	nr_buses_to_use = min(2,len(data['journey'])) # catch cases where ZVV returns less than 2 buses
 	
 	for i in range(nr_buses_to_use):
 		timeToNextBus.append(data['journey'][i]['countdown_val'])
@@ -48,7 +48,7 @@ def get_next_bus():
 		busTo.append(data['journey'][i]['st'])
 		
 		# sometimes the delay (rt) from ZVV will just output false
-		if data['journey'][i]['rt'] == False:
+		if data['journey'][i]['rt'] == False or data['journey'][i]['rt'] is None:
 			delay.append('0')
 		else:
 			delay.append(data['journey'][i]['rt']['dlm'])
